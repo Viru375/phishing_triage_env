@@ -1,0 +1,6 @@
+name: phishing-triage-env
+version: "0.1.0"
+description: "A real-world OpenEnv environment simulating a Tier-1 SOC Phishing Email Triage Analyst, requiring analysis of headers, links, and attachments to identify phishing and spear-phishing."
+entry_point: "server.app:app"
+environment:
+  python: ">=3.10"
