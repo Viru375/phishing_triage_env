@@ -12,6 +12,10 @@ from server.environment import PhishingEnvironment
 app = FastAPI(title="Phishing Email Triage Environment")
 env = PhishingEnvironment()
 
+@app.get("/")
+def read_root():
+    return {"status": "running"}
+
 @app.get("/health")
 def health():
     return {"status": "healthy"}
@@ -64,7 +68,7 @@ def grader():
 @app.post("/baseline")
 def baseline():
     try:
-        from baseline import run_eval
+        from inference import run_eval
         scores = run_eval(local=True)
         return {"scores": scores, "status": "success"}
     except ImportError as e:

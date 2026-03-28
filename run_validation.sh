@@ -13,11 +13,11 @@ echo "2. Building Docker image..."
 docker build -t phishing-triage-env .
 
 echo "3. Running Docker container locally..."
-docker run -d --name phishing-test -p 8000:8000 phishing-triage-env
+docker run -d --name phishing-test -p 7860:7860 phishing-triage-env
 sleep 3 # wait for fastAPI to start
 
 echo "4. Pinging Health Endpoint..."
-HEALTH=$(curl -s http://localhost:8000/health)
+HEALTH=$(curl -s http://localhost:7860/health)
 if [[ "$HEALTH" != *"healthy"* ]]; then
     echo "ERROR: Health endpoint failed!"
     docker stop phishing-test && docker rm phishing-test
@@ -26,7 +26,7 @@ fi
 echo "Health check passed: $HEALTH"
 
 echo "5. Testing Baseline Script Execution (Local dry-run)"
-python baseline.py
+python inference.py
 
 echo "6. Cleaning Up"
 docker stop phishing-test

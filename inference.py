@@ -1,7 +1,7 @@
 import os
 import json
 import re
-from huggingface_hub import InferenceClient
+from openai import OpenAI
 from client import PhishingEnvClient
 from models import TriageAction
 
@@ -43,16 +43,22 @@ def run_eval(local=False):
     Evaluates the LLM against the Phishing Environment.
     Runs tasks: easy, medium, hard.
     """
-    # 1. Connect to Hugging Face API
+    # 1. Connect to LLM API per rules (API_BASE_URL, MODEL_NAME, HF_TOKEN)
     api_key = os.environ.get("HF_TOKEN") or os.environ.get("OPENAI_API_KEY")
+    api_base = os.environ.get("API_BASE_URL", "https://api.openai.com/v1")
+    model_name = os.environ.get("MODEL_NAME", "gpt-4o-mini")
+
     if not api_key:
-        print("Warning: Please set your HF_TOKEN environment variable!")
+        print("Warning: Please set your HF_TOKEN or OPENAI_API_KEY environment variable!")
         return {"error": "Missing API token"}
             
-    llm_client = InferenceClient(api_key=api_key)
+    llm_client = OpenAI(
+        api_key=api_key,
+        base_url=api_base
+    )
     
     # 2. Connect to our Local FastAPI Environment
-    env_client = PhishingEnvClient(base_url="http://localhost:8000")
+    env_client = PhishingEnvClient(base_url="http://localhost:7860")
     
     levels = ["easy", "medium", "hard"]
     final_scores = {}
@@ -76,9 +82,9 @@ def run_eval(local=False):
             user_prompt = f"LAST ACTION RESULT:\n{observation.last_action_result}\n\nINBOX:\n{inbox_json}\n\nWhat is your next action in strict JSON?"
             
             try:
-                # Ask the Llama 3 AI for the next action!
-                response = llm_client.chat_completion(
-                    model="meta-llama/Meta-Llama-3-8B-Instruct",
+                # Ask the AI for the next action!
+                response = llm_client.chat.completions.create(
+                    model=model_name,
                     messages=[
                         {"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": user_prompt}
