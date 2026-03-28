@@ -1,3 +1,12 @@
+---
+title: Phishing Triage Env
+emoji: 📧
+colorFrom: blue
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 # Phishing Email Triage Analyst (OpenEnv)
 
 A complete, real-world OpenEnv-compliant Reinforcement Learning environment for a **Tier-1 SOC Phishing Email Triage Analyst**. 
