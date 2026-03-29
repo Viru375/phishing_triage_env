@@ -1,5 +1,6 @@
 import os
 import sys
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -75,3 +76,10 @@ def baseline():
         return {"error": f"Import error: {str(e)}"}
     except Exception as e:
         return {"error": str(e)}
+
+def main():
+    """Main entry point for the OpenEnv server."""
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+
+if __name__ == "__main__":
+    main()
