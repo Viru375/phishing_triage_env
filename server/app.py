@@ -117,3 +117,21 @@ async def chat_completions(request: Request):
         ],
         "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     }
+
+
+# ─────────────────────────────────────────────
+# Entry Point (required by openenv validate)
+# ─────────────────────────────────────────────
+
+def main(host: str = "0.0.0.0", port: int = 7860) -> None:
+    """
+    Start the FastAPI server via uvicorn.
+    Why: openenv validate requires a main() function declared in server/app.py
+    and a [project.scripts] server = 'server.app:main' entry in pyproject.toml.
+    """
+    import uvicorn
+    uvicorn.run("server.app:app", host=host, port=port)
+
+
+if __name__ == "__main__":
+    main()
