@@ -1,0 +1,60 @@
+env_id: saas-invoice-collection-v1
+name: SaaS Invoice Collection Simulator
+version: "1.0.0"
+description: >
+  A reinforcement learning environment where an agent acts as a SaaS account manager
+  trying to collect overdue invoices from clients without causing them to churn.
+
+observation_space:
+  type: dict
+  fields:
+    - name: days_overdue
+      type: int
+      description: Number of days the invoice has been unpaid (0–30)
+    - name: client_patience
+      type: int
+      description: Client patience score (0–100). Drops to 0 = client churned.
+    - name: invoice_paid
+      type: bool
+      description: Whether the invoice has been paid this episode.
+
+action_space:
+  type: discrete
+  n: 3
+  labels:
+    - WAIT
+    - POLITE_REMINDER
+    - FIRM_WARNING
+
+reward_range: [-50.0, 50.0]
+
+endpoints:
+  reset:
+    method: POST
+    path: /reset
+  step:
+    method: POST
+    path: /step
+  state:
+    method: GET
+    path: /state
+  tasks:
+    method: GET
+    path: /tasks
+  grader:
+    method: POST
+    path: /grader/{task_id}
+  health:
+    method: GET
+    path: /
+
+tasks:
+  - id: 0
+    name: Easy — Polite Collection
+    description: Client has high patience. Practice using gentle reminders early.
+  - id: 1
+    name: Medium — Impatient Client
+    description: Client starts with reduced patience. Must balance urgency without triggering churn.
+  - id: 2
+    name: Hard — Last-Minute Collection
+    description: Invoice is already 20 days overdue. Aggressive tactics required to collect in time.
